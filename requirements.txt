@@ -4,3 +4,4 @@ google-cloud-vision
 google-cloud-storage
 firebase
 firebase_admin
+opencv-python
