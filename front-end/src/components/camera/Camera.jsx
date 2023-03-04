@@ -47,10 +47,6 @@ const Camera = () => {
       link.href = dataURL;
       link.click();
 
-
-      console.log('Saved!');
-
-
       setHasPhoto(true); 
    }
 
