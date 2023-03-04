@@ -1,6 +1,9 @@
 import React, {useRef, useState, useEffect} from "react";
 import styles from "./styles.module.css";
-import canvasToImage from 'canvas-to-image';
+import * as React from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
+import GraphicEqIcon from '@mui/icons-material/GraphicEq';
+import { textToSpeech } from "../../javascript/textToSpeech";
 
 const object = {
    url: 'https://static.wikia.nocookie.net/mana/images/7/71/SD3Poto.png/revision/latest/scale-to-width-down/310?cb=20120108212923',
@@ -11,9 +14,9 @@ const Camera = () => {
    const photoRef = useRef(null);
 
    const [hasPhoto, setHasPhoto] = useState(false);
-   //const [imageUrl, setImageUrl] = useState('');
+   const [isProcessingPhoto, setProcessingPhoto] = useState(false);
    const [data, setData] = useState({
-      imageUrl: '',
+      url: '',
       objects: []
    });
    // const [message, setMessage] = useState({
@@ -56,11 +59,7 @@ const Camera = () => {
       //send url for backend, if get object.length==0 -> sorry; if have object -> call textToSpeech
       setImageUrl(photoRef.current.toDataURL('../image/'));
       postUrlAPI();
-
-      // const link = document.createElement('a');
-      // link.download = 'myImage.png';
-      // link.href = dataURL;
-      // link.click();
+      getUrlAPI();
 
       setHasPhoto(true); 
    }
@@ -83,8 +82,14 @@ const Camera = () => {
    }
 
    const getUrlAPI = async() => {
+      setProcessingPhoto(true);
       const result = await response.json();
-      setData({ imageUrl: '', data: result, ...data});
+      await textToSpeech(result)
+      if (result.objects.length > 0){
+         setData({ url: result.url, objects: result.objects, ...data});
+      } else {
+      }
+      setProcessingPhoto(false);
    }
 
 
@@ -108,8 +113,21 @@ const Camera = () => {
             <button onClick={takePhoto}>Take a picture!</button>
          </div>
          <div className={hasPhoto? styles.resultHasPhoto : styles.result}>
-            <canvas ref={photoRef}></canvas>
-            <button onClick={closePhoto}>Close</button>
+            {isProcessingPhoto ? 
+               <div> 
+                  <CircularProgress /> 
+                  <canvas ref={photoRef}></canvas>
+                  <GraphicEqIcon /><h3>Processing image...</h3>
+               </div>
+               : 
+               <div> 
+                  <img src={data.url} alt="My Image" />
+                  {(async () => await textToSpeech(data.objects))()}
+                  <GraphicEqIcon />
+               </div>
+            
+            }
+            
          </div>
       </div>
    )
