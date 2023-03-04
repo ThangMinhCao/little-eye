@@ -28,7 +28,7 @@ export async function textToSpeech(data) {
   const [response] = await client.synthesizeSpeech(request);
   console.log(response);
   // Write the binary audio content to a local file
-  const writeFile = util.promisify(fs.writeFile);
+  const writeFile = util.promisify(fs.writeFileSync);
   await writeFile('output.mp3', response.audioContent, 'binary');
   console.log('Audio content written to file: output.mp3');
 }
