@@ -56,40 +56,34 @@ const Camera = () => {
       console.log(photoRef.current);
       //Save image 
       // canvasToImage(photoRef.current);
-      //send url for backend, if get object.length==0 -> sorry; if have object -> call textToSpeech
       setImageUrl(photoRef.current.toDataURL('../image/'));
+      setData({url: photoRef.current.toDataURL('../image/'), ...data})
       postUrlAPI();
-      getUrlAPI();
 
       setHasPhoto(true); 
    }
 
    const postUrlAPI = async() => {
+      setProcessingPhoto(true);
+
       const response = await fetch('/api/image', {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json'
          },
-         body: JSON.stringify({ url: data.imageUrl})
+         body: JSON.stringify({ url: data.url})
        })
        .then(response => response.json())
-       .then(data => {
-         console.log(data);
+       .then(async database => {
+         console.log(database);
+         setData({objects: database, ...data})
+         await textToSpeech(data.objects)
+         setProcessingPhoto(false);
+
        })
        .catch(error => {
          console.error(error);
        });
-   }
-
-   const getUrlAPI = async() => {
-      setProcessingPhoto(true);
-      const result = await response.json();
-      await textToSpeech(result)
-      if (result.objects.length > 0){
-         setData({ url: result.url, objects: result.objects, ...data});
-      } else {
-      }
-      setProcessingPhoto(false);
    }
 
 
@@ -118,11 +112,11 @@ const Camera = () => {
                   <CircularProgress /> 
                   <canvas ref={photoRef}></canvas>
                   <GraphicEqIcon /><h3>Processing image...</h3>
+               
                </div>
                : 
                <div> 
                   <img src={data.url} alt="My Image" />
-                  {(async () => await textToSpeech(data.objects))()}
                   <GraphicEqIcon />
                </div>
             

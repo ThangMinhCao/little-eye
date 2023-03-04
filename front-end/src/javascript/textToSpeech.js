@@ -14,7 +14,7 @@ export async function textToSpeech(data) {
     text = "Sorry, i cannot find any object. Please try again.";
   }else{
     const temp = data.join(", ");
-    text = `I found ${temp} in your image.`;
+    text = `I found ${temp} in your image. Choose one to find its color.`;
   }
   const request = {
     input: {text: text},
@@ -32,4 +32,4 @@ export async function textToSpeech(data) {
   await writeFile('output.mp3', response.audioContent, 'binary');
   console.log('Audio content written to file: output.mp3');
 }
-textToSpeech(data);
+//textToSpeech(data);
