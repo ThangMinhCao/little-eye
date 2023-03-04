@@ -7,7 +7,7 @@
 ## 2. Install
 ```
     python3 -m venv venv
-    pip install flask
+    pip install -r requirements.txt
 ```
 
 ## 3. Start server
