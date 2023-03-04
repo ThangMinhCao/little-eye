@@ -1,15 +1,16 @@
 from scipy.spatial import KDTree
 from webcolors import CSS3_HEX_TO_NAMES, hex_to_rgb
-def detect_properties(path):
+from google.cloud import vision
+from .obj_processor import read_img_url
+import cv2
+
+
+def detect_properties(image_in_bytes):
     """Detects image properties in the file."""
-    from google.cloud import vision
-    import io
     client = vision.ImageAnnotatorClient()
 
-    with io.open(path, 'rb') as image_file:
-        content = image_file.read()
-
-    image = vision.Image(content=content)
+    # image = vision.Image(source=vision.ImageSource(image_uri=url))
+    image = vision.Image(content=image_in_bytes)
 
     response = client.image_properties(image=image)
     props = response.image_properties_annotation
@@ -32,6 +33,7 @@ def detect_properties(path):
                 response.error.message))
     return arr
 
+
 def convert_rgb_to_names(rgb_tuple):
     
     # a dictionary of all the hex and their respective names in css3
@@ -45,3 +47,9 @@ def convert_rgb_to_names(rgb_tuple):
     kdt_db = KDTree(rgb_values)
     distance, index = kdt_db.query(rgb_tuple)
     return f'closest match: {names[index]}'
+
+
+if __name__ == "__main__":
+    url = "https://htmlcolorcodes.com/assets/images/colors/red-color-solid-background-1920x1080.png"
+    _, img = cv2.imencode(".png", read_img_url(url))
+    detect_properties(img.tobytes())
