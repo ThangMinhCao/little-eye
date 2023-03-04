@@ -1,0 +1,9 @@
+# ignoring environment directories
+.vscode/
+gonline_env/
+.env
+*.db
+__pycache__/
+run.sh
+/venv/
+Dockerfile

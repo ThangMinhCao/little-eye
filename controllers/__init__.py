@@ -1,0 +1,1 @@
+from . import color_identifier, obj_processor, voice_processor
