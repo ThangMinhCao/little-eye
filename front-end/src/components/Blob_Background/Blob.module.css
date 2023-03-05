@@ -1,0 +1,22 @@
+* {
+   margin: 0;
+   box-sizing: border-box;
+   outline: none;
+}
+
+html {
+   scroll-behavior: smooth;
+}
+.wrapper {
+   position: fixed;
+   left: 0;
+   top:0;
+   width: 70%;
+   z-index: -10;
+}
+svg {
+   position: absolute;
+   /* width: 80%; */
+   /* top: 50%;
+   left: 50%; */
+}
