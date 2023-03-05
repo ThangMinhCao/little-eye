@@ -4,6 +4,8 @@ import Webcam from "react-webcam";
 import Card from "@mui/material/Card";
 import useSpeechToText from "react-hook-speech-to-text";
 import { textTSpeech } from "./textToSpeech";
+import Blob from "./components/Blob_Background/Blob";
+import Header from "./components/Header/Header";
 
 const App = () => {
   const {
@@ -91,6 +93,8 @@ const App = () => {
 
   return (
     <div className="App">
+      <Header/>
+      <Blob/>
       <Card sx={{ height: "70%", width: "900px", borderRadius: 5 }}>
         {
           stage === 0
