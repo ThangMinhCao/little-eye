@@ -8,6 +8,10 @@ import uuid
 from rembg import remove
 
 
+cred = credentials.Certificate("firebase-littleeye.json")
+initialize_app(cred, {'storageBucket': 'little-eye-fceb4.appspot.com'})
+
+
 def localize_objects(url):
     """Localize objects in the local image.
 
@@ -20,7 +24,8 @@ def localize_objects(url):
     #     content = image_file.read()
     
     # print(content)
-    image = vision.Image(source=vision.ImageSource(image_uri=url))
+    # image = vision.Image(source=vision.ImageSource(image_uri=url))
+    image = vision.Image(content=url)
     objects = client.object_localization(image=image).localized_object_annotations
 
     return objects
@@ -84,9 +89,6 @@ def draw_object_borders(objects, img):
 
 def save_to_firebase(img):
     # Init firebase with your credentials
-    cred = credentials.Certificate("firebase-littleeye.json")
-    initialize_app(cred, {'storageBucket': 'little-eye-fceb4.appspot.com'})
-
     # Put your local file path 
     bucket = storage.bucket()
     _, JPEG = cv2.imencode('.jpg', img)
@@ -100,7 +102,8 @@ def save_to_firebase(img):
 
 def remove_obj_background(img):
     output = remove(img)
-    cv2.imwrite("test.png", output)
+    # cv2.imwrite("test.png", output)
+    return output
 
 
 def read_img_url(url):

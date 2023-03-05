@@ -3,41 +3,6 @@ import "./App.css";
 import Webcam from "react-webcam";
 import Card from "@mui/material/Card";
 import useSpeechToText from "react-hook-speech-to-text";
-import { storage, uploadImage } from "./services/firebase";
-
-// function handleUpload() {
-//   if (!file) {
-//     alert("Please choose a file first!");
-//   }
-//   const storageRef = ref(storage, `/files/${file.name}`);
-//   const uploadTask = uploadBytesResumable(storageRef, file);
-//   uploadTask.on(
-//     "state_changed",
-//     (snapshot) => {
-//       const percent = Math.round(
-//         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-//       ); // update progress
-//       setPercent(percent);
-//     },
-//     (err) => console.log(err),
-//     () => {
-//       // download url
-//       getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-//         console.log(url);
-//       });
-//     }
-//   );
-// }
-
-function _base64ToArrayBuffer(base64) {
-    var binary_string = window.atob(base64);
-    var len = binary_string.length;
-    var bytes = new Uint8Array(len);
-    for (var i = 0; i < len; i++) {
-        bytes[i] = binary_string.charCodeAt(i);
-    }
-    return bytes.buffer;
-}
 
 const App = () => {
   const {
@@ -53,17 +18,15 @@ const App = () => {
   });
   const webcamRef = React.useRef(null);
   const [currentResult, setCurrentResult] = useState("");
-  const capturePhoto = React.useCallback(
-    () => {
-      const screenshot = webcamRef.current.getScreenshot();
-      // const img = new Image();
-      // img.src = screenshot.replace(/^data:image\/[a-z]+;base64,/, "");
-      // return screenshot.replace(/^data:image\/[a-z]+;base64,/, "");
-      return screenshot;
-    },
-    [webcamRef]
-  );
-  const [img, setImg] = useState(null);
+  const [stage, setStage] = useState(0);
+  const [newImg, setNewImg] = useState("");
+  const [objects, setObjects] = useState([]);
+  const [oriImg, setOriImg] = useState("");
+
+  const capturePhoto = React.useCallback(() => {
+    const screenshot = webcamRef.current.getScreenshot();
+    return screenshot;
+  }, [webcamRef]);
 
   useEffect(() => {
     startSpeechToText();
@@ -73,36 +36,71 @@ const App = () => {
     if (Boolean(interimResult)) {
       setCurrentResult(interimResult);
 
-      console.log(interimResult)
-      if (interimResult.trim() === "capture") {
-        console.log("capture22")
+      console.log(interimResult);
+      if (stage === 0 && interimResult.trim() === "capture") {
+        console.log("capture22");
         const img = capturePhoto();
-        setImg(img);
+        setOriImg(img);
 
-        console.log(img);
-        // setImg(img.replace('dataimage/jpegbase64', ''));
-        // uploadImage(_base64ToArrayBuffer(img));
-        uploadImage(img);
+        stopSpeechToText();
+        fetch("http://localhost:5000/api/image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ base64: img }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Success:", data);
+            setNewImg(data.url); 
+            setObjects(data.objects.map(obj => obj.toLowerCase()));
+            setStage(1);
+
+            startSpeechToText();
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      } else if (stage === 1) {
+        if (objects.includes(interimResult.trim().toLowerCase())) {
+          stopSpeechToText();
+          
+          fetch(`http://localhost:5000/api/color?url=${1}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ base64: oriImg, object_index: objects.indexOf(interimResult.toLowerCase()) }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Success:", data);
+              // setNewImg(data.url);
+              // setStage(2);
+              // startSpeechToText();
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
       }
-        // send POST request to backend
-
-        // fetch("http://localhost:5000/api/image", {
-        //   method: "POST",
-        //   body: JSON.stringify({ url: "thefkingurl" }),
-        // });
     }
   }, [interimResult]);
 
   return (
     <div className="App">
       <Card sx={{ height: "70%", width: "900px", borderRadius: 5 }}>
-        <Webcam ref={webcamRef} screenshotFormat="image/jpeg" className="cam" />
+        {
+          stage === 0
+          ? <Webcam ref={webcamRef} screenshotFormat="image/jpeg" className="cam" />
+          : <img src={newImg} />
+        }
       </Card>
-      <button onClick={isRecording ? stopSpeechToText : startSpeechToText}>
+      {/* <button onClick={isRecording ? stopSpeechToText : startSpeechToText}>
         {isRecording ? "Stop Recording" : "Start Recording"}
-      </button>
-      <p>{currentResult}</p>
-      <img src={img}/>
+      </button> */}
+      {/* <p>{currentResult}</p> */}
     </div>
   );
 };
