@@ -28,13 +28,17 @@ def main():
 
     objects = localize_objects(content)
     obj_img = get_object(objects[index], img)
-    cut_obj = remove_obj_background(obj_img)
-    _, encoded_image = cv2.imencode('.png', cut_obj)
+    # cut_obj = remove_obj_background(obj_img)
+    # _, encoded_image = cv2.imencode('.png', cut_obj)
+    _, encoded_image = cv2.imencode('.png', obj_img)
 
-    dom_color = detect_properties(encoded_image.tobytes())
-    print(dom_color)
+    three_dom = detect_properties(encoded_image.tobytes())
+    print(three_dom)
+    res = {
+        "colors": three_dom
+    }
 
-    return "Main page"
+    return res, 200
 
 @app.route('/api/image', methods=['POST'])
 def handle_post_img():

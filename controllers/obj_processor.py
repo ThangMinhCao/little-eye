@@ -102,7 +102,7 @@ def save_to_firebase(img):
 
 def remove_obj_background(img):
     output = remove(img)
-    # cv2.imwrite("test.png", output)
+    cv2.imwrite("test.png", output)
     return output
 
 
