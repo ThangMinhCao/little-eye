@@ -3,6 +3,7 @@ import "./App.css";
 import Webcam from "react-webcam";
 import Card from "@mui/material/Card";
 import useSpeechToText from "react-hook-speech-to-text";
+import { textTSpeech } from "./textToSpeech";
 
 const App = () => {
   const {
@@ -38,7 +39,6 @@ const App = () => {
 
       console.log(interimResult);
       if (stage === 0 && interimResult.trim() === "capture") {
-        console.log("capture22");
         const img = capturePhoto();
         setOriImg(img);
 
@@ -56,7 +56,8 @@ const App = () => {
             setNewImg(data.url); 
             setObjects(data.objects.map(obj => obj.toLowerCase()));
             setStage(1);
-
+            textTSpeech(data)
+            window.setTimeout(data.objects.length*1000);
             startSpeechToText();
           })
           .catch((error) => {
