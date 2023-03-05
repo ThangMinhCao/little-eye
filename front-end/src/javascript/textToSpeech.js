@@ -1,12 +1,14 @@
 // Imports the Google Cloud client library
-const textToSpeech = require('@google-cloud/text-to-speech');
+const google = require('@google-cloud/text-to-speech');
 
 // Import other required libraries
-const fs = require('fs');
-const util = require('util');
+// const fs = require('fs');
+// const util = require('util');
+// import fs from "fs";
+// import util from "util";
 
 // Creates a client
-const client = new textToSpeech.TextToSpeechClient();
+const client = new google.TextToSpeechClient();
 export async function textToSpeech(data) {
   // Construct the request
   let text = "";
@@ -26,10 +28,10 @@ export async function textToSpeech(data) {
 
   // Performs the text-to-speech request
   const [response] = await client.synthesizeSpeech(request);
-  console.log(response);
-  // Write the binary audio content to a local file
-  const writeFile = util.promisify(fs.writeFileSync);
-  await writeFile('output.mp3', response.audioContent, 'binary');
-  console.log('Audio content written to file: output.mp3');
+  // console.log(response);
+  // // Write the binary audio content to a local file
+  // const writeFile = util.promisify(fs.writeFileSync);
+  // await writeFile('output.mp3', response.audioContent, 'binary');
+  // console.log('Audio content written to file: output.mp3');
 }
 //textToSpeech(data);
