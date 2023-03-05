@@ -7,6 +7,8 @@ import { textTSpeech } from "./textToSpeech";
 import Blob from "./components/Blob_Background/Blob";
 import Header from "./components/Header/Header";
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 const App = () => {
   const {
     error,
@@ -53,13 +55,15 @@ const App = () => {
           body: JSON.stringify({ base64: img }),
         })
           .then((response) => response.json())
-          .then((data) => {
+          .then(async (data) => {
             console.log("Success:", data);
             setNewImg(data.url); 
             setObjects(data.objects.map(obj => obj.toLowerCase()));
             setStage(1);
             textTSpeech(data)
-            window.setTimeout(data.objects.length*1000);
+
+            await delay(objects.length * 1000 + 6000)
+
             startSpeechToText();
           })
           .catch((error) => {
@@ -69,7 +73,7 @@ const App = () => {
         if (objects.includes(interimResult.trim().toLowerCase())) {
           stopSpeechToText();
           
-          fetch(`http://localhost:5000/api/color?url=${1}`, {
+          fetch(`http://localhost:5000/api/color`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

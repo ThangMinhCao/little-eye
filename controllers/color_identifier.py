@@ -23,15 +23,18 @@ def detect_properties(image_in_bytes):
         arr[iteration].append(color.pixel_fraction)
         arr[iteration].append(convert_rgb_to_names((color.color.red, color.color.green, color.color.blue)))
         iteration = iteration + 1
+    
+    colors = sorted(props.dominant_colors.colors, key=lambda x: x.pixel_fraction, reverse=True)
+    color = colors[0]
+    dom_color = convert_rgb_to_names((color.color.red, color.color.green, color.color.blue))
         
-    print(arr)
-
+    # print(arr)
     if response.error.message:
         raise Exception(
             '{}\nFor more info on error messages, check: '
             'https://cloud.google.com/apis/design/errors'.format(
                 response.error.message))
-    return arr
+    return dom_color
 
 
 def convert_rgb_to_names(rgb_tuple):

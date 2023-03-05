@@ -18,25 +18,22 @@ def main():
     # url = "https://tourismhamilton.com/media/f3de6ad6-d412-435c-81b7-15bae76f209f.jpg"
     base64img = json.loads(request.data)["base64"]
     index = json.loads(request.data)["object_index"]
+    # print(f"bas64: {base64img}, index: {index}")
+
     encoded_data = base64img.split(',')[1]
     nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     _, encoded_image = cv2.imencode('.png', img)
     content = encoded_image.tobytes()
 
-
-    print("before")
     objects = localize_objects(content)
     obj_img = get_object(objects[index], img)
     cut_obj = remove_obj_background(obj_img)
-    print(cut_obj.shape)
+    _, encoded_image = cv2.imencode('.png', cut_obj)
 
-    # colors = detect_properties(cut_obj.tobytes())
-    # colors = detect_properties()
-    # print(colors)
-    # img = read_img_url(url)
-    # img = draw_object_borders(objects, img)
-    # save_to_firebase(img)
+    dom_color = detect_properties(encoded_image.tobytes())
+    print(dom_color)
+
     return "Main page"
 
 @app.route('/api/image', methods=['POST'])
