@@ -1,0 +1,26 @@
+.wrapper {
+   position: fixed;
+   left: 0;
+   top:0;
+   height: 100px;
+   width: 100%;
+   z-index: 10;
+}
+
+.logo {
+   position: relative;
+   box-sizing: border-box;
+   width: 200px;
+   margin:auto;
+   transition: ease-in-out .2s;
+}
+
+.logo img {
+   width: 300px;
+   transition: ease-in-out .2s;
+}
+
+.logo :hover {
+   width: 310px;
+}
+
