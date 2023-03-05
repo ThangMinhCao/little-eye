@@ -33,10 +33,9 @@
 // }
 import { useSpeechSynthesis } from "react-speech-kit";
 export async function textTSpeech(data, stage, obj) {
-  const msg = new SpeechSynthesisUtterance();
-  let textRead = "";
-
   if (stage === 0) {
+    const msg = new SpeechSynthesisUtterance();
+    let textRead = "";
     if (data.objects.length == 0) {
       textRead = "Sorry, i cannot find any object. Please try again.";
     } else {
@@ -44,11 +43,15 @@ export async function textTSpeech(data, stage, obj) {
       textRead = `I found ${temp} in your image. Choose one to find its color.`;
     }
     msg.text = textRead;
-  } else {
+    console.log(msg.text);
+    window.speechSynthesis.speak(msg);
+  }else{
+    const msg = new SpeechSynthesisUtterance();
+    let textRead = "";
     console.log(data.colors[0][0])
     msg.text = `Three dominant colors of the ${obj} are: ${data.colors[0][0]}, ${data.colors[1][0]}, and ${data.colors[2][0]}.`;
     // msg.text = `Three dominant colors of the ${obj} are: ${data.colors[0]}, ${data.colors[1]}, and ${data.colors[2]]}.`;
+    console.log(msg.text);
+    window.speechSynthesis.speak(msg);
   }
-  console.log(msg.text);
-  window.speechSynthesis.speak(msg);
 }

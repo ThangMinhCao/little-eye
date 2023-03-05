@@ -47,7 +47,7 @@ const App = () => {
         setOriImg(img);
 
         stopSpeechToText();
-        fetch("http://localhost:5000/api/image", {
+        fetch("http://localhost:8080/api/image", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -74,7 +74,7 @@ const App = () => {
           if (interimResult.trim().toLowerCase().includes(objects[i])) {
             stopSpeechToText();
             
-            fetch(`http://localhost:5000/api/color`, {
+            fetch(`http://localhost:8080/api/color`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -85,7 +85,7 @@ const App = () => {
               .then(async (data) => {
                 console.log("Success:", data);
                 textTSpeech(data, 1, objects[i])
-
+            
                 // await delay(objects.length * 1000 + 6000)
                 // startSpeechToText();
               })
