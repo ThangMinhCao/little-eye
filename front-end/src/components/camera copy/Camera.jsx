@@ -53,8 +53,8 @@ const Camera = () => {
       //Save image 
       // canvasToImage(photoRef.current);
       //send url for backend, if get object.length==0 -> sorry; if have object -> call textToSpeech
-      setImageUrl(photoRef.current.toDataURL('../image/'));
-      postUrlAPI();
+      // setImageUrl(photoRef.current.toDataURL('../image/'));
+      // postUrlAPI();
 
       // const link = document.createElement('a');
       // link.download = 'myImage.png';
@@ -64,27 +64,27 @@ const Camera = () => {
       setHasPhoto(true); 
    }
 
-   const postUrlAPI = async() => {
-      const response = await fetch('/api/image', {
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/json'
-         },
-         body: JSON.stringify({ url: data.imageUrl})
-       })
-       .then(response => response.json())
-       .then(data => {
-         console.log(data);
-       })
-       .catch(error => {
-         console.error(error);
-       });
-   }
+   // const postUrlAPI = async() => {
+   //    const response = await fetch('/api/image', {
+   //       method: 'POST',
+   //       headers: {
+   //         'Content-Type': 'application/json'
+   //       },
+   //       body: JSON.stringify({ url: data.imageUrl})
+   //     })
+   //     .then(response => response.json())
+   //     .then(data => {
+   //       console.log(data);
+   //     })
+   //     .catch(error => {
+   //       console.error(error);
+   //     });
+   // }
 
-   const getUrlAPI = async() => {
-      const result = await response.json();
-      setData({ imageUrl: '', data: result, ...data});
-   }
+   // const getUrlAPI = async() => {
+   //    const result = await response.json();
+   //    setData({ imageUrl: '', data: result, ...data});
+   // }
 
 
    const closePhoto = () => {
