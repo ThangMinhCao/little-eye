@@ -59,8 +59,8 @@ const App = () => {
             console.log("Success:", data);
             setNewImg(data.url); 
             setObjects(data.objects.map(obj => obj.toLowerCase()));
+            textTSpeech(data, 0, "")
             setStage(1);
-            textTSpeech(data)
 
             await delay(objects.length * 1000 + 6000)
 
@@ -70,26 +70,31 @@ const App = () => {
             console.error("Error:", error);
           });
       } else if (stage === 1) {
-        if (objects.includes(interimResult.trim().toLowerCase())) {
-          stopSpeechToText();
-          
-          fetch(`http://localhost:5000/api/color`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ base64: oriImg, object_index: objects.indexOf(interimResult.toLowerCase()) }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log("Success:", data);
-              // setNewImg(data.url);
-              // setStage(2);
-              // startSpeechToText();
+        for (let i = 0; i < objects.length; i++) {
+          if (interimResult.trim().toLowerCase().includes(objects[i])) {
+            stopSpeechToText();
+            
+            fetch(`http://localhost:5000/api/color`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ base64: oriImg, object_index: objects.indexOf(interimResult.toLowerCase()) }),
             })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
+              .then((response) => response.json())
+              .then(async (data) => {
+                console.log("Success:", data);
+                textTSpeech(data, 1, objects[i])
+
+                // await delay(objects.length * 1000 + 6000)
+                // startSpeechToText();
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+            
+            break;
+          }
         }
       }
     }

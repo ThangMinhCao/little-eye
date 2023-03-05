@@ -32,17 +32,23 @@
 //   console.log("Audio content written to file: output.mp3");
 // }
 import { useSpeechSynthesis } from "react-speech-kit";
-export async function textTSpeech(data) {
+export async function textTSpeech(data, stage, obj) {
   const msg = new SpeechSynthesisUtterance();
   let textRead = "";
-  if (data.objects.length == 0) {
-    textRead = "Sorry, i cannot find any object. Please try again.";
+
+  if (stage === 0) {
+    if (data.objects.length == 0) {
+      textRead = "Sorry, i cannot find any object. Please try again.";
+    } else {
+      const temp = data.objects.join(", ");
+      textRead = `I found ${temp} in your image. Choose one to find its color.`;
+    }
+    msg.text = textRead;
   } else {
-    const temp = data.objects.join(", ");
-    textRead = `I found ${temp} in your image. Choose one to find its color.`;
+    console.log(data.colors[0][0])
+    msg.text = `Three dominant colors of the ${obj} are: ${data.colors[0][0]}, ${data.colors[1][0]}, and ${data.colors[2][0]}.`;
+    // msg.text = `Three dominant colors of the ${obj} are: ${data.colors[0]}, ${data.colors[1]}, and ${data.colors[2]]}.`;
   }
-  msg.text = textRead;
   console.log(msg.text);
   window.speechSynthesis.speak(msg);
-  
 }
