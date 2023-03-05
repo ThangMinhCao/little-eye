@@ -8,4 +8,5 @@ run.sh
 /venv/
 Dockerfile
 littleeye.json
+firebase-littleeye.json
 /node_modules

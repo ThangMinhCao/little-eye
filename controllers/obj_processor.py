@@ -5,6 +5,7 @@ import random
 from firebase_admin import credentials, initialize_app, storage
 from google.cloud import vision
 import uuid
+from rembg import remove
 
 
 def localize_objects(url):
@@ -20,18 +21,12 @@ def localize_objects(url):
     
     # print(content)
     image = vision.Image(source=vision.ImageSource(image_uri=url))
-
     objects = client.object_localization(image=image).localized_object_annotations
 
     return objects
 
-# objects = localize_objects(url)
 
-def get_object(object):
-    url = "https://images.squarespace-cdn.com/content/59c91be812abd9f4e102f2e4/1526881274908-1N59Z1SRBDV35I2HAJKW/Hanoi-18.jpg?format=1500w&content-type=image%2Fjpeg"
-    url_response = urllib.request.urlopen(url)
-    img = cv2.imdecode(np.array(bytearray(url_response.read()), dtype=np.uint8), -1)
-
+def get_object(object, img):
     r, c, _ = img.shape
 
     bounded_vertices = list(map(lambda v: [v.x * c, v.y * r], object.bounding_poly.normalized_vertices))
@@ -57,7 +52,9 @@ def get_object(object):
 
     # cv2.imshow("dst1", img)
     # cv2.imshow("dst2", dst2)
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
+    # return base64.b64encode(cv2.imencode('.jpg', dst2)[1].tobytes())
+    return dst2
 
 
 def draw_object_borders(objects, img):
@@ -98,11 +95,14 @@ def save_to_firebase(img):
 
     # Opt : if you want to make public access from the URL
     blob.make_public()
-    print("your file url", blob.public_url)
+    return blob.public_url
 
-# print(objects)
-# for object in objects:
-#     get_object(object, img_path)
 
-# img = draw_object_borders(objects, img)
-# save_to_firebase(img)
+def remove_obj_background(img):
+    output = remove(img)
+    cv2.imwrite("test.png", output)
+
+
+def read_img_url(url):
+    url_response = urllib.request.urlopen(url)
+    return cv2.imdecode(np.array(bytearray(url_response.read()), dtype=np.uint8), -1)
