@@ -76,7 +76,7 @@ def draw_object_borders(objects, img):
         alpha = 0.70
         img = cv2.addWeighted(img, 1-alpha, contour, alpha, 0)
 
-        cv2.putText(img, object.name, (pts[0][0], pts[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.5, color, 2, 2)
+        cv2.putText(img, object.name, (pts[0][0] + 50, pts[0][1] + 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, 2)
 
     # r = 1000.0 / img.shape[1]
     # dim = (1000, int(img.shape[0] * r))

@@ -16,14 +16,15 @@ def detect_properties(image_in_bytes):
     props = response.image_properties_annotation
     print('Properties:')
 
-    arr = []
-    iteration = 0
-    for color in props.dominant_colors.colors:
-        arr.append([])
-        arr[iteration].append(color.pixel_fraction)
-        arr[iteration].append(convert_rgb_to_names(
-            (color.color.red, color.color.green, color.color.blue)))
-        iteration = iteration + 1
+    # arr = []
+    # iteration = 0
+    # for color in props.dominant_colors.colors:
+    #     arr.append([])
+    #     arr[iteration].append(color.pixel_fraction)
+    #     arr[iteration].append(convert_rgb_to_names(
+    #         (color.color.red, color.color.green, color.color.blue)))
+    #     arr[iteration].append((color.color.red, color.color.green, color.color.blue))
+    #     iteration = iteration + 1
 
     # from collections import Counter
     # print("Counter", Counter(map(lambda color: convert_rgb_to_names((color.color.red, color.color.green, color.color.blue)), props.dominant_colors.colors)))
@@ -31,13 +32,17 @@ def detect_properties(image_in_bytes):
     from collections import defaultdict
 
     dom_colors = list(map(lambda color: (color.pixel_fraction, convert_rgb_to_names(
-        (color.color.red, color.color.green, color.color.blue)).split(":")[-1].strip()), props.dominant_colors.colors))
-    color_points = defaultdict(float)
+        (color.color.red, color.color.green, color.color.blue)).split(":")[-1].strip(),
+        (color.color.red, color.color.green, color.color.blue)), props.dominant_colors.colors))
+    color_points = {}
 
-    for p, c in dom_colors:
-        color_points[c] += p
+    for p, c, rgb in dom_colors:
+        if c not in color_points:
+            color_points[c] = [0, rgb]
+            
+        color_points[c][0] += p
 
-    colors = sorted(color_points.items(), key=lambda x: x[1], reverse=True)
+    colors = list(map(lambda x: (x[0], x[1][0], x[1][1]), sorted(color_points.items(), key=lambda x: x[1][0], reverse=True)))
     three_dom = colors[:3]
 
     # print(arr)

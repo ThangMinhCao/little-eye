@@ -48,8 +48,17 @@ export async function textTSpeech(data, stage, obj) {
   }else{
     const msg = new SpeechSynthesisUtterance();
     let textRead = "";
-    console.log(data.colors[0][0])
-    msg.text = `Three dominant colors of the ${obj} are: ${data.colors[0][0]}, ${data.colors[1][0]}, and ${data.colors[2][0]}.`;
+    // console.log(data.colors[0][0])
+    // console.log("OBJ", obj)
+    let prefix = ["Three", 3];
+    if (data.colors.length == 1) {
+      msg.text = `One dominant colors of the ${obj} is: ${data.colors[0][0]}. Any other thing?`;
+    }
+    if (data.colors.length == 2){
+      msg.text = `Two dominant colors of the ${obj} are: ${data.colors[0][0]}, ${data.colors[1][0]}. Any other thing?`;
+    }
+    else
+      msg.text = `Three dominant colors of the ${obj} are: ${data.colors[0][0]}, ${data.colors[1][0]}, and ${data.colors[2][0]}. Any other thing?`;
     // msg.text = `Three dominant colors of the ${obj} are: ${data.colors[0]}, ${data.colors[1]}, and ${data.colors[2]]}.`;
     console.log(msg.text);
     window.speechSynthesis.speak(msg);
